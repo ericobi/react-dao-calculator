@@ -1,0 +1,299 @@
+import React from 'react';
+import { Box, Grid, Text, Input, Card } from '@makerdao/ui-components-core';
+import { greaterThanOrEqual } from 'utils/bignumber';
+import { TextBlock } from 'components/Typography';
+import { getUsdPrice, calcCDPParams } from 'utils/cdp';
+import { formatCollateralizationRatio, prettifyNumber } from 'utils/ui';
+import { cdpParamsAreValid } from '../../utils/cdp';
+
+import lang from 'languages';
+import ScreenFooter from './ScreenFooter';
+import ScreenHeader from './ScreenHeader';
+
+import { ETH } from '@makerdao/dai';
+
+function OpenCDPForm({
+  selectedIlk,
+  cdpParams,
+  handleInputChange,
+  daiAvailable
+}) {
+  const userHasSufficientGemBalance = greaterThanOrEqual(
+    selectedIlk.userGemBalance,
+    cdpParams.gemsToLock
+  );
+  const userCanDrawDaiAmount = greaterThanOrEqual(
+    daiAvailable,
+    cdpParams.daiToDraw,
+    cdpParams.daiToDraw1
+  );
+  const fields = [
+    [
+      0,
+      lang.formatString(
+        lang.cdp_create.deposit_form_field1_title,
+        selectedIlk.currency.symbol
+      ),
+      lang.formatString(
+        lang.cdp_create.deposit_form_field1_text,
+        selectedIlk.currency.symbol
+      ),
+      <Input
+        key="collinput"
+        name="gemsToLock"
+        after={selectedIlk.data.gem}
+        type="number"
+        value={cdpParams.gemsToLock}
+        onChange={handleInputChange}
+        width={300}
+        errorMessage={
+          userHasSufficientGemBalance || !cdpParams.gemsToLock
+            ? null
+            : lang.formatString(
+                lang.cdp_create.insufficient_ilk_balance,
+                selectedIlk.currency.symbol
+              )
+        }
+      />,
+      <Box key="ba">
+        <Text t="subheading">{lang.your_balance} </Text>
+        <Text
+          t="caption"
+          display="inline-block"
+          ml="s"
+          color="darkLavender"
+          onClick={() => {
+            handleInputChange({
+              target: {
+                name: 'gemsToLock',
+                value: selectedIlk.userGemBalance
+              }
+            });
+          }}
+        >
+          {selectedIlk.userGemBalance} {selectedIlk.data.gem}
+        </Text>
+      </Box>
+    ],
+    [
+      1,
+      lang.cdp_create.deposit_form_field3_title,
+      lang.cdp_create.deposit_form_field3_text,
+      <Input
+        key="daiToDraw"
+        name="daiToDraw"
+        after="COL"
+        width="250px"
+        type="number"
+        errorMessage={
+          userCanDrawDaiAmount ? null : lang.cdp_create.draw_too_much_dai
+        }
+        value={cdpParams.daiToDraw}
+        onChange={handleInputChange}
+      />,
+      <Grid gridRowGap="xs" key="keytodrawinfo">
+        <Box key="ba">
+          <Text t="subheading">
+            {lang.cdp_create.deposit_form_field3_after2}{' '}
+          </Text>
+          <Text
+            display="inline-block"
+            ml="s"
+            t="caption"
+            color="darkLavender"
+            onClick={() => {
+              handleInputChange({
+                target: {
+                  name: 'daiToDraw',
+                  value: daiAvailable
+                }
+              });
+            }}
+          >
+            {lang.mock_data.max_avail_to_generate} COL
+          </Text>
+        </Box>
+      </Grid>
+    ],
+    [
+      2,
+      lang.cdp_create.deposit_form_field4_title,
+      lang.cdp_create.deposit_form_field4_text,
+      <Input
+        key="daiToDraw1"
+        name="daiToDraw1"
+        after="COL"
+        width="250px"
+        type="number"
+        errorMessage={
+          userCanDrawDaiAmount ? null : lang.cdp_create.draw_too_much_dai
+        }
+        value={cdpParams.daiToDraw1}
+        onChange={handleInputChange}
+      />,
+      <Grid gridRowGap="xs" key="keytodrawinfo1">
+        <Box key="ba1">
+          <Text t="subheading">
+            {lang.cdp_create.deposit_form_field4_after2}{' '}
+          </Text>
+          <Text
+            display="inline-block"
+            ml="s"
+            t="caption"
+            color="darkLavender"
+            onClick={() => {
+              handleInputChange({
+                target: {
+                  name: 'daiToDraw1',
+                  value: daiAvailable
+                }
+              });
+            }}
+          >
+            {lang.mock_data.max_avail_to_generate} COL
+          </Text>
+        </Box>
+      </Grid>
+    ]
+  ];
+
+  return (
+    <Grid gridRowGap="l" maxWidth="100%">
+      <Grid
+        gridTemplateColumns="auto"
+        gridRowGap="l"
+        gridColumnGap="m"
+        alignItems="center"
+      >
+        {fields.map(([index, title, text, input, renderAfter]) => {
+          return (
+            <Grid gridRowGap="s" key={title + index}>
+              <Grid gridRowGap="xs">
+                <TextBlock t="h5" lineHeight="normal">
+                  {title}
+                </TextBlock>
+                <TextBlock t="body">{text}</TextBlock>
+              </Grid>
+              <Box py="2xs">{input}</Box>
+              {renderAfter}
+            </Grid>
+          );
+        })}
+      </Grid>
+    </Grid>
+  );
+}
+
+const CDPCreateDepositSidebar = ({
+  selectedIlk,
+  liquidationPrice,
+  collateralizationRatio
+}) => {
+  const {
+    liquidationPenalty,
+    liquidationRatio,
+    rate,
+    debtCeiling,
+    ilkDebtAvailable
+  } = selectedIlk.data;
+
+  return (
+    <Grid gridRowGap="m">
+      {[
+        [
+          lang.collateralization_ratio,
+          //formatCollateralizationRatio(collateralizationRatio)
+          lang.mock_data.collateralizationRatio
+        ],
+        [lang.collateral_debt_ceiling, `${lang.mock_data.collateral_debt_ceiling} DAI`],
+        [lang.stability_fee, `${lang.mock_data.stability_fee}`],
+        [lang.liquidation_ratio, `${lang.mock_data.liquidation_ratio}`],
+        [lang.liquidation_penalty, `${lang.mock_data.liquidation_penalty}`],
+      ].map(([title, value]) => (
+        <Grid gridRowGap="xs" key={title}>
+          <TextBlock t="h5" lineHeight="normal">
+            {title}
+          </TextBlock>
+          <TextBlock t="body">{value}</TextBlock>
+        </Grid>
+      ))}
+    </Grid>
+  );
+};
+
+const CDPCreateDeposit = ({ cdpParams, dispatch }) => {
+  const { gemsToLock, daiToDraw } = cdpParams;
+
+  const selectedIlk = {
+    currency: {
+      symbol: 'ETH'
+    },
+    data: {
+      feedValueUSD: ETH(158.11),
+      gem: 'COL',
+    },
+    key: '',
+    userGemBalance: lang.mock_data.your_balance
+  };
+  console.log(selectedIlk);
+
+  const {
+    liquidationPrice,
+    collateralizationRatio,
+    daiAvailable
+  } = calcCDPParams({ ilkData: selectedIlk.data, gemsToLock, daiToDraw });
+
+  
+
+  function handleInputChange({ target }) {
+    if (parseFloat(target.value) < 0) return;
+    dispatch({
+      type: `form/set-${target.name}`,
+      payload: { value: target.value }
+    });
+  }
+  return (
+    <Box
+      maxWidth="1040px"
+      css={`
+        margin: 0 auto;
+      `}
+    >
+      <ScreenHeader
+        title={lang.formatString(
+          lang.cdp_create.risk_title,
+          selectedIlk.currency.symbol
+        )}
+        text={lang.cdp_create.risk_text}
+        text1={lang.cdp_create.risk_text1}
+      />
+      <Grid
+        gridTemplateColumns={{ s: 'minmax(0, 1fr)', l: '2fr 1fr' }}
+        gridGap="m"
+        my="l"
+      >
+        <Card px={{ s: 'm', m: 'xl' }} py={{ s: 'm', m: 'l' }}>
+          <OpenCDPForm
+            cdpParams={cdpParams}
+            handleInputChange={handleInputChange}
+            selectedIlk={selectedIlk}
+            daiAvailable={daiAvailable}
+          />
+        </Card>
+        <Card px={{ s: 'm', m: 'xl' }} py={{ s: 'm', m: 'l' }} css={`display: inline-table; `}>
+          <CDPCreateDepositSidebar
+            selectedIlk={selectedIlk}
+            collateralizationRatio={collateralizationRatio}
+            liquidationPrice={liquidationPrice}
+          />
+        </Card>
+      </Grid>
+      <ScreenFooter
+        dispatch={dispatch}
+        canProgress={true}
+        hidden={true}
+      />
+    </Box>
+  );
+};
+export default CDPCreateDeposit;
