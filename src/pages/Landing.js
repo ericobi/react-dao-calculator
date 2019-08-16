@@ -2,10 +2,8 @@ import React from 'react';
 import { hot } from 'react-hot-loader/root';
 import Footer from '@makerdao/ui-components-footer';
 import Header from '@makerdao/ui-components-header';
-import { Link } from 'react-navi';
 import { Box, Flex, Card, Text } from '@makerdao/ui-components-core';
 import LandingHeroLayout from 'layouts/LandingHeroLayout';
-import { Routes } from '../utils/constants';
 
 import { Title } from 'components/Typography';
 
