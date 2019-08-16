@@ -168,7 +168,7 @@ function RouteEffects({ network }) {
 
   useEffect(() => {
     if (network !== 'mainnet' && window.location.hostname !== 'localhost') {}
-      //userSnapInit();
+      userSnapInit();
   }, [network]);
 
   useEffect(() => {
