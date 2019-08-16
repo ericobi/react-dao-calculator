@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { map, route, mount, redirect, withView } from 'navi';
+import { map, route, mount,  withView } from 'navi';
 import { View } from 'react-navi';
 
 import Navbar from 'components/Navbar';
@@ -15,8 +15,6 @@ import AwaitMakerAuthentication from 'components/AwaitMakerAuthentication';
 import { ModalProvider } from 'providers/ModalProvider';
 import { SidebarProvider } from 'providers/SidebarProvider';
 import MakerProvider from 'providers/MakerProvider';
-
-import config from 'references/config';
 import MobileNav from 'components/MobileNav';
 import { userSnapInit } from 'utils/analytics';
 import useMaker from 'hooks/useMaker';
@@ -24,7 +22,6 @@ import useStore from 'hooks/useStore';
 import { startWatcher } from './watch';
 import { Routes } from 'utils/constants';
 
-const { networkNames, defaultNetwork } = config;
 
 const withBorrowLayout = route =>
   hasNetwork(
