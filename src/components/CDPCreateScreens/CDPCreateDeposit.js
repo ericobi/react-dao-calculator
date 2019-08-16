@@ -2,9 +2,6 @@ import React from 'react';
 import { Box, Grid, Text, Input, Card } from '@makerdao/ui-components-core';
 import { greaterThanOrEqual } from 'utils/bignumber';
 import { TextBlock } from 'components/Typography';
-import { getUsdPrice, calcCDPParams } from 'utils/cdp';
-import { formatCollateralizationRatio, prettifyNumber } from 'utils/ui';
-import { cdpParamsAreValid } from '../../utils/cdp';
 
 import lang from 'languages';
 import ScreenFooter from './ScreenFooter';
