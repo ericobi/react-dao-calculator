@@ -5,7 +5,6 @@ import StepperHeader from 'components/StepperHeader';
 import {
   CDPCreateSelectCollateral,
   CDPCreateSetAllowance,
-  CDPCreateConfirmCDP,
   CDPCreateDeposit
 } from 'components/CDPCreateScreens';
 import useMaker from 'hooks/useMaker';
@@ -13,8 +12,7 @@ import useMaker from 'hooks/useMaker';
 const screens = [
   ['Exchange Api Page', props => <CDPCreateSetAllowance {...props} />],
   ['Select Collateral Type', props => <CDPCreateSelectCollateral {...props} />],
-  ['Risk Parameters', props => <CDPCreateDeposit {...props} />],
-  //['Confirmation', props => <CDPCreateConfirmCDP {...props} />]
+  ['Risk Parameters', props => <CDPCreateDeposit {...props} />]
 ];
 
 const initialState = {

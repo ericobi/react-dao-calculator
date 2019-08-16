@@ -33,29 +33,6 @@ const MyCard = ({title, onClick}) => (
   </Box>
 );
 
-const CardLink = ({ title, link }) => (
-  <Box mx="l">
-    <Link href={`/${link}`}>
-      <Card width="400px" height="250px">
-        <Flex
-          flexDirection="column"
-          justifyContent="center"
-          alignItems="center"
-          height="100%"
-        >
-          <Text.h2>{title}</Text.h2>
-          <br />
-          <Text.h2>Parameters</Text.h2>
-          <br />
-
-          {/* Delete below later */}
-          <Text.h1>&#10230;</Text.h1>
-        </Flex>
-      </Card>
-    </Link>
-  </Box>
-);
-
 function Landing() {
 
   const { show } = useModal();
