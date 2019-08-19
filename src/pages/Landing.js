@@ -44,10 +44,10 @@ function Landing() {
               Risk Portal
             </Title>
             <Flex pb="l" flexDirection="row" justifyContent="space-around">
-              <MyCard title="Governance" onClick={() =>
+              {/* <MyCard title="Governance" onClick={() =>
                 show({ modalType: 'cdpcreate', modalTemplate: 'fullscreen' })
               } />
-              <MyCard title="Programmatic" />
+              <MyCard title="Programmatic" /> */}
             </Flex>
           </Flex>
         </LandingHeroLayout>
