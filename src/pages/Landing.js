@@ -40,9 +40,9 @@ function Landing() {
       <Box bg="backgroundGrey">
         <LandingHeroLayout>
           <Flex flexDirection="column">
-            {/* <Title pb="l" textAlign="center">
+            <Title pb="l" textAlign="center">
               Risk Portal
-            </Title> */}
+            </Title>
             <Flex pb="l" flexDirection="row" justifyContent="space-around">
               <MyCard title="Governance" onClick={() =>
                 show({ modalType: 'cdpcreate', modalTemplate: 'fullscreen' })
