@@ -48,7 +48,7 @@ _see [this PR](https://github.com/makerdao/mcd-cdp-portal/pull/26) for more deta
 
 ### Change Mockup data in Deposit Step
 
-## Author : Axel Medrano
+## Author : Superdev1994
 
 1. Go to src/languages/_english.json
 
